@@ -12,10 +12,9 @@ A CLI software which can fastly build log files and manage them.
 This is an open source software. You are free to use,\
 modify, and redistribute it. However, you must include\
 the original author's information and the original\
-source code.\
+source code.
 
-This program is a fast log recording constructor.\
-It can :\
+This program is a fast log recording constructor.It can :
 
 1. Support record simple message by BLog.
 2. Support record project message by PLog.
@@ -26,7 +25,7 @@ It can :\
 
 This is a Command Line Interface (CLI) program.\
 the command are all be lowercase, any different\
-is reject. here are commands:\
+is reject. here are commands:
 
      commands are like:
        FLRecord/base> fast [-cmd] [arg]
