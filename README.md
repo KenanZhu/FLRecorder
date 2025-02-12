@@ -7,7 +7,10 @@
 
 ![FLRecorder_Logo](./doc/FLRecorder_CODE.png#pic_center)
 
-![STARS](https://img.shields.io/github/stars/KenanZHu/FLRecorder.svg#pic_center) ![ISSUES](https://img.shields.io/github/issues/KenanZHu/FLRecorder.svg#pic_center) ![LICENSE](https://img.shields.io/github/license/KenanZHu/FLRecorder.svg#pic_center)
+![STARS](https://img.shields.io/github/stars/KenanZHu/FLRecorder.svg#pic_center) 
+![ISSUES](https://img.shields.io/github/issues/KenanZHu/FLRecorder.svg#pic_center) 
+![LICENSE](https://img.shields.io/github/license/KenanZHu/FLRecorder.svg#pic_center)\
+
 A CLI software which can fastly build log files and manage them.
 
 ## Brief
@@ -40,7 +43,7 @@ is reject. here are commands:
         [-ver]            Get program version.
         [-init]           Init the workfolder.
         [-new]            Add a new log file.
-           |____[int]     log type.
+           |____[str]     <optional> log type.
            |____[str]     log file name.
         [-rm]             Remove a log file.
            |____[str]     log file name.
@@ -87,13 +90,15 @@ the examples:
 ``fast -new p example.plog``
 ``fast -new f example.flog``
 
-The second argument is the log file name. The
-log format must match with the expansion name,
-or the program will reject it.
+The second argument is the log file name. When
+exist the first argument, The log format must
+match with the expansion name, or the program
+will reject it. Omit the first argument, the
+program will create BLog format as default.
 
 #### fast -rm [str]
 
-This command will remove a log file in the
+This command will remove a file in the
 workfolder. Meanwhile it accept one argument.
 This argument is the any file name in the
 workfolder.
