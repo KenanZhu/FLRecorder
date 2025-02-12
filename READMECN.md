@@ -2,7 +2,7 @@
 
 [中文](READMECN.md) | [English](README.md)
 
-> [!注意]
+> [!NOTE]
 > 该项目还处于试验阶段.
 
 ![FLRecorder_Logo](./doc/FLRecorder_CODE.png#pic_center)
