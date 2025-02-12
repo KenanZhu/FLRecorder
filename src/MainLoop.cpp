@@ -22,7 +22,7 @@
 ///        [-ver]            Get program version.
 ///        [-init]           Init the workfolder.
 ///        [-new]            Add a new log file.
-///           |____[int]     log type.
+///           |____[str]     log type.
 ///           |____[str]     log file name.
 ///        [-rm]             Remove a log file.
 ///           |____[str]     log file name.
@@ -42,6 +42,7 @@
 /// ----------------------------------------------------///
 /// \hsitory $-Date      $-Version  $-Update
 ///          2025-02-09  0.0.1      First Created.
+///          2025-02-12  0.0.3      See Update Note.
 /// 
 ///=====================================================///
 
@@ -49,11 +50,6 @@
 #include ".\CLI\CmdLI.h"
 #include ".\LogTypes\LogTypes.h"
 #include ".\FileHandle\FileHandle.h"
-
-extern void ProLaunchMsg();
-extern void SysLevel(int Level);
-extern void SysInfo(int Level,string Msg);
-extern void DistrFunc(int Code,vector<string> CMD);
 
 using namespace std;
 
@@ -63,17 +59,14 @@ static Cli::CliBase *CLI;
 
 int main(int argc,char *argv[])
 {
-    int LnhMod,CODE;
+    int LnhMod;
     string CMD;
 
     /// System Level Init:
     ///   set system info level by command line argument.
-    if      (argc==1) {
-        LnhMod=0;
-        SysLevel(-1);
-    }
+    if      (argc==1) LnhMod=0;
     else if (argc==2) {
-        try { SysLevel(LnhMod=stoi(argv[1]));}
+        try { LnhMod=stoi(argv[1]);}
         catch (invalid_argument) {
             cout<<"exit (code=-1): Invalid argument '"+string(argv[1])+"' !"; 
             return -1;
@@ -83,18 +76,16 @@ int main(int argc,char *argv[])
         cout<<"exit (code=-1): Too many arguments !";
         return -1;
     }
-    CLI=new Cli::CliBase(LnhMod);
+    CLI=new Cli::CliBase();
 
-    ProLaunchMsg();
     while (true) {
         
         /// Get User Input
-        cout<<".\\FLRecord\\base> ";
+        cout<<"FLRecorder\\main> ";
         getline(cin,CMD,'\n');
         
-        CODE=CLI->DecodeCmd(CMD);
-        /// Process Command
-        DistrFunc(CODE,CLI->sef_CmdSect);
+        /// Distribute Command
+        CLI->DistributeCmd(CMD);
     }
     return 0;
 }

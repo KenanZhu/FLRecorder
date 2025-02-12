@@ -62,18 +62,18 @@ int Log::BLog::DetectTimeStamp(string PreLine,string CurLine,double *Dt)
 
     if (Dt1<0) {
         if ((Dt0*Dt1)<0) { // Previous Record Detected
-            this->PutMessage(1,"V Time stamp detected jump=(Dt0="+to_string(Dt0)+", Dt1="+to_string(Dt1));
+            this->PutMessage("V Time stamp detected jump=(Dt0="+to_string(Dt0)+", Dt1="+to_string(Dt1));
             return -3;
         }
         // Current Record Detected
-        this->PutMessage(1,"V Time stamp detected jump=(Dt0="+to_string(Dt0)+", Dt1="+to_string(Dt1));
+        this->PutMessage("V Time stamp detected jump=(Dt0="+to_string(Dt0)+", Dt1="+to_string(Dt1));
         return -4;
     }
     if (Dt1>0) {
         if (fabs(Dt1)< MAX_LOG_TIME_JUMP) return 1; // No Record Detected
         if (fabs(Dt1)>=MAX_LOG_TIME_JUMP) {
             if ((Dt1-Dt0)>MAX_LOG_TIME_JUMP) { // Previous Record Detected
-                this->PutMessage(1,"Λ Time stamp detected jump=(Dt0="+to_string(Dt0)+", Dt1="+to_string(Dt1));
+                this->PutMessage("Λ Time stamp detected jump=(Dt0="+to_string(Dt0)+", Dt1="+to_string(Dt1));
                 return -3;
             }
         }
@@ -87,13 +87,13 @@ bool Log::BLog::DetectLog(string PreLine,string CurLine,double *Dt,int *p)
 
     // WARN: Lower
     if (PreLine.size()<=MIN_LINE||CurLine.size()<=MIN_LINE) {
-        this->PutMessage(1,"DetectLog-> (Lower_Min_Line): "+CurLine);
+        this->PutMessage("(Lower_Min_Line): "+CurLine);
         return false;
     }
 
     // WARN: Over Maxline
     if (PreLine.size()>MAX_LINE||CurLine.size()>MAX_LINE) {
-        this->PutMessage(1,"DetectLog-> (Over_Max_Line): "+CurLine);
+        this->PutMessage("(Over_Max_Line): "+CurLine);
         return false;
     }
 
@@ -101,18 +101,18 @@ bool Log::BLog::DetectLog(string PreLine,string CurLine,double *Dt,int *p)
 
     // WARN: No Log Sign
     if (!this->DetectLogSign(CurLine)) {
-        this->PutMessage(1,"DetectLog-> (No_Log_Sign): "+CurLine);
+        this->PutMessage("(No_Log_Sign): "+CurLine);
         return false;
     }
     
     switch (this->DetectTimeStamp(PreLine,CurLine,Dt))
     {
     // WARN: No Time Stamp
-    case-1: this->PutMessage(1,"DetectLog-> (No_Time_Stamp): "+PreLine); return false;
-    case-2: this->PutMessage(1,"DetectLog-> (No_Time_Stamp): "+CurLine); return false;
+    case-1: this->PutMessage("(No_Time_Stamp): "+PreLine); return false;
+    case-2: this->PutMessage("(No_Time_Stamp): "+CurLine); return false;
     // WARN: Time Stamp Jump
-    case-3: this->PutMessage(1,"DetectLog-> (Time_Jump): "+PreLine); *p=-1; return false;
-    case-4: this->PutMessage(1,"DetectLog-> (Time_Jump): "+CurLine); *p= 0; return false;
+    case-3: this->PutMessage("(Time_Jump): "+PreLine); *p=-1; return false;
+    case-4: this->PutMessage("(Time_Jump): "+CurLine); *p= 0; return false;
     }
     return true;
 }
@@ -123,53 +123,33 @@ Log::BLog::BLog(int MaxLogs)
     this->Init(MaxLogs);
 }
 
-void Log::BLog::PutMessage(int Level,string Msg)
+void Log::BLog::PutMessage(string Msg)
 {
-    string LevelSign;
-
-    if (Level<LEVEL_1) CliBase::PutMessage(LEVEL_0,Msg);
-    if (Level>LEVEL_1) return;
-
-    LevelSign="[-Inh] LogBasic ";
-    FileHandle::PutMessage(LEVEL_1,LevelSign+Msg);
-
+    Fhd::FileHandle::PutMessage(Msg);
     return;
 }
 
-bool Log::BLog::Open()
+bool Log::BLog::AddLog(string LogMsg)
 {
-    if (!FileHandle::Open())     return sef_LogState=false;
-    if (this->Format()<FFMT_LOG) return sef_LogState=false;
-    if (!this->CheckLog())       return sef_LogState=false;
-
-    return sef_LogState=true;
-}
-
-bool Log::BLog::AddLog(int AddPos,string LogMsg)
-{
-    if (!this->IsOpen()) {
-        this->PutMessage(1,"AddLog-> Target file is closed");
-        return false;
-    }
+    this->Close();
     if (sef_FilePath.empty()) {
-        this->PutMessage(1,"AddLog-> No log file path");
+        this->PutMessage("No log file path");
         return false;
     }
+    sef_FileHand.open(sef_FilePath,ios::app);
     
-    AddPos=sef_LogAmount+1;
     sef_FileHand<<LogMsg<<endl;
+    sef_LogAmount++;
+    sef_FileHand.close();
     
     return true;
 }
 
-bool Log::BLog::DelLog(int DelPos,string LogMsg)
+bool Log::BLog::DelLog(string LogMsg)
 {
-    if (!this->IsOpen()) {
-        this->PutMessage(1,"AddLog-> Target file is closed");
-        return false;
-    }
+    this->Close();
     if (sef_FilePath.empty()) {
-        this->PutMessage(1,"AddLog-> No log file path");
+        this->PutMessage("No log file path");
         return false;
     }
 
@@ -189,22 +169,22 @@ bool Log::BLog::CheckLog(void)
 
         if (Counter[0]>=100&&(((double)Counter[1]/(double)Counter[0])>MAX_INV_LOGS_RATE)) {
             this->Close();
-            this->PutMessage(1,"CheckLog-> fail (Over_Max_Invaild_Log_Rate)");
+            this->PutMessage("fail (Over_Max_Invaild_Log_Rate)");
             return sef_LogState=false;
         }
         if (Counter[0]>=1+1&&!this->DetectLog(Line[0],Line[1],Dt,&p)) {
             if (!CorrectLog()) {
                 Counter[1]++;
-                this->PutMessage(1,"CheckLog-> invaild record, Line="+std::to_string(Counter[0]+p));
+                this->PutMessage("invaild record, Line="+std::to_string(Counter[0]+p));
             }
         }
         Line[0]=Line[1];
     }
     if (((sef_LogAmount=Counter[0])-Counter[1])>MAX_LOGS) {
-        this->PutMessage(1,"CheckLog-> Fail (Over_Max_Logs)");
+        this->PutMessage("Fail (Over_Max_Logs)");
         return false;
     }
-    this->PutMessage(1,"CheckLog-> Ok !");
+    this->PutMessage("Ok !");
     return true;
 }
 

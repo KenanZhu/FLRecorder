@@ -41,16 +41,13 @@ public:
     BLog(int MaxLogs=MAX_LOGS);
 
     // ReWrite Base Class
-    void PutMessage(int Level,string Msg);
-
-    // ReStruct Base Class Methord
-    bool Open();
+    void PutMessage(string Msg);
 
     // Add Log Record
-    bool AddLog(int AddPos=-1,string LogMsg=" ");
+    bool AddLog(string LogMsg=" ");
 
     // Delete Log Record
-    bool DelLog(int DelPos=-1,string LogMsg=" ");
+    bool DelLog(string LogMsg=" ");
 
     // Check Log Vaild
     bool CheckLog(void);
@@ -80,4 +77,3 @@ public:
 }
 
 #endif // !_LOGTYPES_H_
-
