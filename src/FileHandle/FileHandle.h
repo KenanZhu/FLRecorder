@@ -2,7 +2,6 @@
 #define _FILEHANDLE_H_
 
 #include "..\FLRecorder.h"
-#include "..\CLI\CmdLI.h"
 
 /// 
 /// File/Folder Handle Classes
@@ -11,7 +10,7 @@ namespace Fhd {
 
 /// File Handle Basic Class
 /// 
-class FileHandle: public Cli::CliBase
+class FileHandle
 {
 protected:
     int sef_FileFormat;
@@ -24,15 +23,14 @@ private:
     // Init All Members
     void Init(void);
 
-    // Get File State: Exist
-    bool IsExist();
+    
 
 public:
     FileHandle(void);
     ~FileHandle(void);
 
     // ReWrite Base Class
-    void PutMessage(int Level,string Msg);
+    void PutMessage(string Msg);
 
     // Get File Path
     string Path(void);
@@ -46,14 +44,14 @@ public:
     // Set File Path
     int SetPath(string FilePath);
 
-    // Open File
-    bool Open();
-
     // Create File
     bool Create(void);
 
     // Remove File
     bool Remove(void);
+
+    // Get File State: Exist
+    bool IsExist(void);
 
     // Get File State: Open State
     bool IsOpen(void);

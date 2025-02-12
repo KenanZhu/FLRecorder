@@ -2,13 +2,11 @@
 #define _CMFLI_H_
 
 #include "..\FLRecorder.h"
-
-#define LEVEL_0 0 // Message Level: Base Class
-#define LEVEL_1 1 // Message Level: Inherit Class
-#define LEVEL_2 2 // Message Level: Spare
+#include "..\LogTypes\LogTypes.h"
+#include "..\FileHandle\FileHandle.h"
 
 /// 
-/// Command Line Interface Class
+/// Command Line Interface Namespace
 /// 
 namespace Cli {
 
@@ -17,8 +15,34 @@ namespace Cli {
 class CliBase
 {
 protected:
-    int sef_Level;
+    bool InitFlag=false;
+    string WorkFolderPath;
+    vector<string> BLogPaths;
+    vector<string> PLogPaths;
+    vector<string> FLogPaths;
 private:
+    // CLI: Launch Message
+    void ProLaunchMsg(void);
+
+    // CLI: Help Message
+    void ProHelpMsg(void);
+
+    // CLI: Version Message
+    void ProVersionMsg(void);
+
+    // CLI Dependent Functions
+    void GetAllFiles(string Dir,vector<string> *Files);
+    int CreateNewLog(int Type,string Path);
+    void UpdateList(void);
+
+    virtual void ProInitMsg(void);
+    virtual void ProNewMsg (vector<string> CMD);
+    virtual void ProRemMsg (vector<string> CMD);
+    virtual void ProFindMsg(string FileName   );
+    virtual void ProAddMsg (vector<string> CMD);
+    virtual void ProDelMsg (vector<string> CMD);
+    virtual void ProShowMsg(vector<string> CMD);
+    virtual void ProFindMsg(vector<string> CMD);
 
     // Replace Sign by Sign
     int ReplaceStr(string *Str,const char SignDes,const char SignRep);
@@ -27,16 +51,19 @@ private:
     vector<string> SplitStr(string Str,const char Sign);
 
 public:
-    CliBase(int Level=LEVEL_2);
+    CliBase();
 
     // Command Section Vector
     vector<string> sef_CmdSect;
 
     // Put Message On Console
-    void PutMessage(int Level,string Msg);
+    void PutMessage(string Msg);
+
+    // Distribute Command
+    void DistributeCmd(string CMD);
 
     // Decode Command
-    virtual int DecodeCmd(string CMD);
+    int DecodeCmd(string CMD);
 };
 
 }

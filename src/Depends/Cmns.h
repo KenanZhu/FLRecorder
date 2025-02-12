@@ -3,12 +3,32 @@
 
 #include "..\FLRecorder.h"
 
+/// -DATA TYPE ///
+typedef struct {    // Second with Fraction-Second Format
+    long Second;    // Second
+    double Fsecond; // Fraction-Second
+} SecTime;          
+                    
+typedef struct {    // Time Struct in Cal Format 
+    int Year;       // Year   YYYY
+    int Month;      // Month  MM
+    int Day;        // Day    DD
+    int Hour;       // Hour   HH
+    int Minute;     // Minute mm
+    int Second;     // Second ss
+    double Fsecond; // Fraction-Second
+} CalTime;
+
+/// -FUNCTIONS ///
+extern CalTime Sec2CalTime(SecTime Time);
+extern SecTime Cal2SecTime(CalTime Time);
+
 /// 
 /// Common Depends Classes
 /// 
 namespace Cmn {
 
-/// Common Depends
+/// Common Depends Class
 /// 
 class Time
 {

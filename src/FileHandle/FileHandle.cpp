@@ -11,20 +11,6 @@ void Fhd::FileHandle::Init()
     return;
 }
 
-inline bool Fhd::FileHandle::IsExist()
-{
-    if (this->IsOpen()) return true;
-    if (sef_FilePath.empty()||sef_FilePath.size()>=MAX_PATH) return false;
-
-    sef_FileHand.open(sef_FilePath,ios::in);
-    if (!sef_FileHand.is_open()) {
-        return false;
-    }
-    this->Close();
-
-    return true;
-}
-
 ///////////////////////////     PUBLIC
 Fhd::FileHandle::FileHandle()
 {
@@ -36,15 +22,13 @@ Fhd::FileHandle::~FileHandle()
     this->Init();
 }
 
-void Fhd::FileHandle::PutMessage(int Level,string Msg)
+void Fhd::FileHandle::PutMessage(string Msg)
 {
-    std::string LevelSign;
+    string LevelSign;
 
-    if (Level<LEVEL_1) CliBase::PutMessage(LEVEL_0,Msg);
-    if (Level>LEVEL_1) return;
+    LevelSign="--";
 
-    LevelSign="[-Inh] FileHandle ";
-    CliBase::PutMessage(LEVEL_0,LevelSign+Msg);
+    cout<<LevelSign+Msg<<endl;
 
     return;
 }
@@ -75,30 +59,15 @@ int Fhd::FileHandle::Format(string ExpName)
 
 int Fhd::FileHandle::SetPath(string FilePath)
 {
+    int p[2];
+    string ExpName;
+
     if (FilePath.empty()||FilePath.size()>MAX_PATH) return 0;
     if (!sef_FilePath.empty()) this->Init();
     sef_FilePath=FilePath;
 
-    return 1;
-}
-
-bool Fhd::FileHandle::Open()
-{
-    int p[2];
-    string ExpName;
-
-    // File Already Be Open
-    if (this->IsOpen()) return sef_FileState=true;
-
-    // Detect File
-    if (!this->IsExist()) {
-        this->PutMessage(1,"Open-> File is not exist");
-        return sef_FileState=false;
-    }
-    sef_FileHand.open(sef_FilePath);
-
     // Get File Name (exclude expansion name)
-    if      ((p[0]=sef_FilePath.rfind("\\"))!=string::npos) 
+    if      ((p[0]=sef_FilePath.rfind("\\"))!=string::npos)
         sef_FileName=sef_FilePath.substr(p[0]+1);
     else if ((p[0]=sef_FilePath.rfind("/" ))!=string::npos)
         sef_FileName=sef_FilePath.substr(p[0]+1);
@@ -110,19 +79,23 @@ bool Fhd::FileHandle::Open()
     // Get File Format by Expansion Name
     this->Format(ExpName);
 
-    return sef_FileState=true;
+    return 1;
 }
 
 bool Fhd::FileHandle::Create(void)
 {
-    this->PutMessage(1,"Create-> Try to create file at:"+sef_FilePath);
+    this->PutMessage("Try to create file at:"+sef_FilePath);
 
+    if (this->IsExist()) {
+        this->PutMessage("File already exist");
+        return true;
+    }
     sef_FileHand.open(sef_FilePath,ios::out);
     if (!sef_FileHand.is_open()) {
-       this->PutMessage(1,"Create-> Fail to create, Check permissions and try again");
+       this->PutMessage("Fail to create, Check permissions and try again");
        return false;
     }
-    this->PutMessage(1,"Create-> Ok !");
+    this->PutMessage("Ok !");
     this->Close();
 
     return true;
@@ -137,6 +110,21 @@ bool Fhd::FileHandle::Remove(void)
         return true;
     }
     else return false;
+}
+
+inline bool Fhd::FileHandle::IsExist()
+{
+    if (this->IsOpen()) return true;
+    if (sef_FilePath.empty()||sef_FilePath.size()>=MAX_PATH) return false;
+
+    sef_FileHand.open(sef_FilePath,ios::in);
+    if (!sef_FileHand.is_open()) {
+        this->PutMessage("File is not exist");
+        return false;
+    }
+    this->Close();
+
+    return true;
 }
 
 bool Fhd::FileHandle::IsOpen()
