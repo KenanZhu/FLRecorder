@@ -1,5 +1,11 @@
 #include "CmdLI.h"
 
+#ifdef _WIN32
+    #define ACCESS _access
+#elif __APPLE__||__linux__
+    #define ACCESS access
+#endif
+
 /// Command Line Base Class
 /// 
 ///////////////////////////     PRIVATE
@@ -7,7 +13,7 @@ void Cli::CliBase::ProLaunchMsg()
 {
     cout<<endl;
     cout<<" __________________________________________________________"<<endl;
-    cout<<"| >FastLogRecorder Version 0.0.3                           |"<<endl;
+    cout<<"| >FastLogRecorder Version 0.0.5                           |"<<endl;
     cout<<"|                                                          |"<<endl;
     cout<<"|  Copyright (c) 2025 by KenanZhu. All rights reserved.    |"<<endl;
     cout<<"|                                                          |"<<endl;
@@ -65,7 +71,7 @@ void Cli::CliBase::ProHelpMsg()
 void Cli::CliBase::ProVersionMsg()
 {
     cout<<" _________________________________________________________ "<<endl;
-    cout<<"| >FastLogRecorder Version 0.0.3                          |"<<endl;
+    cout<<"| >FastLogRecorder Version 0.0.5                          |"<<endl;
     cout<<endl;
 
     return; 
@@ -73,24 +79,45 @@ void Cli::CliBase::ProVersionMsg()
 
 void Cli::CliBase::GetAllFiles(string Dir, vector<string> *Files)
 {
+
+    this->PutMessage("check files in directory..."+Dir);
+
+#ifdef _WIN32
     intptr_t hFile=0;
     struct _finddata_t fileinfo={0};
     string p;
 
-    this->PutMessage("Check files in directory..."+Dir);
-    if((hFile=_findfirst(p.assign(Dir).append("\\*.*").c_str(),&fileinfo))!=-1) {
+    if((hFile=_findfirst(p.assign(Dir).append("*.*").c_str(),&fileinfo))!=-1) {
         do {
             if((fileinfo.attrib&_A_SUBDIR)) {
                 if(strcmp(fileinfo.name,".")!=0&&strcmp(fileinfo.name,"..")!=0)
-                    this->GetAllFiles(p.assign(Dir).append("\\").append(fileinfo.name),Files);
+                    this->GetAllFiles(p.assign(Dir).append(fileinfo.name),Files);
             }
             else {
-                Files->push_back(p.assign(Dir).append("\\").append(fileinfo.name));
-                this->PutMessage("Find file: "+Files->back());
+                Files->push_back(p.assign(Dir).append(fileinfo.name));
             }
         } while (_findnext(hFile,&fileinfo)==0);
         _findclose(hFile);
+    } 
+#elif __APPLE__||__linux__
+    DIR *dir;
+    struct dirent *ptr;
+
+    if ((dir=opendir(Dir.c_str()))!=NULL) {
+        do {
+            if (ptr->d_type==DT_DIR) {
+                if (strcmp(ptr->d_name,".")!=0&&strcmp(ptr->d_name,"..")!=0)
+                    this->GetAllFiles(Dir+ptr->d_name+"/",Files);
+            }
+            else {
+                Files->push_back(Dir+ptr->d_name);
+            }
+
+        } while ((ptr=readdir(dir))==NULL);
+        closedir(dir);
     }
+#endif
+    return;
 }
 
 void Cli::CliBase::UpdateList()
@@ -98,28 +125,34 @@ void Cli::CliBase::UpdateList()
     int i,j=0;
     vector<string> LogList;
 
-    this->PutMessage("Update log list...");
+    if (!InitFlag) {
+        this->PutMessage("workfolder has not been initialized!");
+    }
 
-    /// Check Work Folder File State
+    this->PutMessage("update log list...");
+
+    // Check work folder file State
     this->GetAllFiles(WorkFolderPath,&LogList);
 
-    /// Clear Old List
+    // Clear old list
     BLogPaths.clear();
     PLogPaths.clear();
     FLogPaths.clear();
 
+    // Reload new list and update
+    // we must check file format first or it can cause fatal
     for (i=0;i<LogList.size();i++) {
-        if      (LogList[i].substr(LogList[i].size()-3)=="log") {
+        if      (LogList[i].substr(LogList[i].size()-4)==".log") {
             BLogPaths.push_back(LogList[i]); j++;
         }
-        else if (LogList[i].substr(LogList[i].size()-4)=="plog") {
+        else if (LogList[i].substr(LogList[i].size()-5)==".plog") {
             PLogPaths.push_back(LogList[i]); j++;
         }
-        else if (LogList[i].substr(LogList[i].size()-4)=="flog") {
+        else if (LogList[i].substr(LogList[i].size()-5)==".flog") {
             FLogPaths.push_back(LogList[i]); j++;
         }
     }
-    this->PutMessage("Find "+to_string(j)+" log files in all lists.");
+    this->PutMessage("find "+to_string(j)+" vaild log files in all lists.");
 
     return;
 }
@@ -130,24 +163,26 @@ void Cli::CliBase::ProInitMsg()
     char Path[MAX_PATH]={0};
 
     if      (InitFlag) {
-        this->PutMessage("Workfolder alreay been initialized!");
+        this->PutMessage("workfolder alreay been initialized!");
         return;
     }
     else if (!getcwd(Path,MAX_PATH)) {
-        this->PutMessage("Get current run path failed!");
+        this->PutMessage("get current run path failed!");
         return;
     }
 
-    /// Set Work Folder Path
+    // Set workfolder path
     WorkFolderPath=Path;
-    WorkFolderPath+="\\log";
-    this->PutMessage("Init workfolder path: "+WorkFolderPath);
+    WorkFolderPath+=SLA;
+    WorkFolderPath+="log";
+    this->PutMessage("init workfolder path: "+WorkFolderPath);
 
-    /// Detect Work Folder Path
-    if (_access(WorkFolderPath.data(),0)!=-1) {
-        this->PutMessage("Workfolder alreay exist!");
+    // Detect workfolder path
+    if (ACCESS(WorkFolderPath.data(),0)!=-1) {
+        this->PutMessage("workfolder alreay exist!");
+        this->PutMessage("try to set as workfolder");
+        WorkFolderPath+=SLA;
         this->UpdateList();
-        this->PutMessage("Set as workfolder");
         InitFlag=true;
         return;
     }
@@ -158,8 +193,9 @@ void Cli::CliBase::ProInitMsg()
     Flag=mkdir(WorkFolderPath.data(),0777);
 #endif
     if (Flag==-1) {
-        this->PutMessage("Init workfolder failed!"); return;
+        this->PutMessage("init workfolder failed!"); return;
     }
+    WorkFolderPath+=SLA;
     InitFlag=true;
 
     return;
@@ -167,99 +203,47 @@ void Cli::CliBase::ProInitMsg()
 
 int Cli::CliBase::CreateNewLog(int Type,string Path)
 {
-    Log::BLog NewBLog;
-    Log::PLog NewPLog;
-    Log::FLog NewFLog;
+    Fhd::FileHandle NewLog;
+    // There we only regard log as universal file in ASCII
+    // so no need to use LogType class, we can use format
+    // to check file type
 
-    switch (Type)
-    {
-    case FFMT_LOG: 
-        NewBLog.SetPath(Path);
-        if (NewBLog.Format()!=FFMT_LOG) {
-            this->PutMessage("Format not match with name!");
-            return 0;
-        }
-        break;
-    case FFMT_PLO: 
-        NewPLog.SetPath(Path);
-        if (NewPLog.Format()!=FFMT_PLO) {
-            this->PutMessage("Format not match with name!");
-            return 0;
-        }
-        break;
-    case FFMT_FLO: 
-        NewFLog.SetPath(Path);
-        if (NewFLog.Format()!=FFMT_FLO) {
-            this->PutMessage("Format not match with name!");
-            return 0;
-        }
-        break;
+    NewLog.SetPath(Path);
+    if (NewLog.Format()!=Type) {
+        this->PutMessage("format not match with name!");
+        return 0;
     }
-    switch (Type) {
-        case FFMT_LOG: 
-        NewBLog.Create();
-        break;
-        case FFMT_PLO: 
-        NewPLog.Create();
-        break;
-        case FFMT_FLO: 
-        NewFLog.Create();
-        break;
-    }
+    NewLog.Create();
+
     return 1;
 }
+
 void Cli::CliBase::ProNewMsg(vector<string> CMD)
 {
-    int Flag=0;
+    int Flag=0,Fmt=0;
 
     if      (!InitFlag) {
-        this->PutMessage("Workfolder has not been initialized!");
+        this->PutMessage("workfolder has not been initialized!");
     }
-    else if (CMD.size()<3) {
-        this->PutMessage("No '[-arg]' in command '-new'");
+    else if (CMD.size()< 3) {
+        this->PutMessage("no '[-arg]' in command '-new'");
+    }
+    else if (CMD.size()==3) {
+        Fmt=FFMT_LOG;
+        this->CreateNewLog(Fmt,WorkFolderPath+CMD[2]);
+    }
+    else if (CMD.size()==4) {
+        if      (CMD[2]=="-b") Fmt=FFMT_LOG;
+        else if (CMD[2]=="-p") Fmt=FFMT_PLO;
+        else if (CMD[2]=="-f") Fmt=FFMT_FLO;
+        else {
+            this->PutMessage("unknow log type! only support '-b','-p','-f'");
+            return;
+        }
+        this->CreateNewLog(Fmt,WorkFolderPath+CMD[3]);
     }
     else {
-        if      (CMD.size()==3) {
-            Flag=this->CreateNewLog(FFMT_LOG,WorkFolderPath+"\\"+CMD[2]);
-            if (Flag==1) {
-                BLogPaths.push_back(WorkFolderPath+"\\"+CMD[2]);
-                this->PutMessage("Create new file at:"+WorkFolderPath+"\\"+CMD[2]);
-                return;
-            }
-        }
-        else if (CMD.size()==4) {
-            if      (CMD[2]=="b") {
-                Flag=this->CreateNewLog(FFMT_LOG,WorkFolderPath+"\\"+CMD[3]);
-                if (Flag==1) {
-                    BLogPaths.push_back(WorkFolderPath+"\\"+CMD[3]);
-                    this->PutMessage("Create new file at:"+WorkFolderPath+"\\"+CMD[3]);
-                    return;
-                }
-            }
-            else if (CMD[2]=="p") {
-                Flag=this->CreateNewLog(FFMT_PLO,WorkFolderPath+"\\"+CMD[3]);
-                if (Flag==1) {
-                    PLogPaths.push_back(WorkFolderPath+"\\"+CMD[3]);
-                    this->PutMessage("Create new file at:"+WorkFolderPath+"\\"+CMD[3]);
-                    return;
-                }
-            }
-            else if (CMD[2]=="f") {
-                Flag=this->CreateNewLog(FFMT_FLO,WorkFolderPath+"\\"+CMD[3]);
-                if (Flag==1) {
-                    FLogPaths.push_back(WorkFolderPath+"\\"+CMD[3]);
-                    this->PutMessage("Create new file at:"+WorkFolderPath+"\\"+CMD[3]);
-                    return;
-                }
-            }
-            else {
-                this->PutMessage("Unknow log type '"+CMD[2]+"'!");
-            }
-        }
-        else if (CMD.size() >4) {
-            this->PutMessage("Too many '[-arg]' in command '-new'");
-        }
-        return;
+        this->PutMessage("too many '[-arg]' in command '-new'");
     }
     return;
 }
@@ -268,45 +252,23 @@ void Cli::CliBase::ProRemMsg(vector<string> CMD)
 {
     Fhd::FileHandle RMLog;
 
-    if (!InitFlag) {
-        this->PutMessage("Workfolder has not been initialized!");
+    if      (!InitFlag) {
+        this->PutMessage("workfolder has not been initialized!");
     }
     else if (CMD.size()<3) {
-        this->PutMessage("No '[-arg]' in command '-rm'");
+        this->PutMessage("no '[-arg]' in command '-rm'");
     }
     else {
-        RMLog.SetPath(WorkFolderPath+"\\"+CMD[2]);
-        if (!RMLog.Remove()) this->PutMessage("Not find file"+CMD[2]);
+        RMLog.SetPath(WorkFolderPath+CMD[2]);
+        if (!RMLog.Remove()) this->PutMessage("cant remove file"+CMD[2]);
         this->PutMessage("Remove log file: "+CMD[2]);
-    }
-    return;
-}
-
-void Cli::CliBase::ProFindMsg(string FileName)
-{
-    int i;
-
-    if (!InitFlag) {
-        this->PutMessage("Workfolder has not been initialized!");
-    }
-    else if (FileName.empty()) {
-        this->PutMessage("No '[-arg]' in command '-find'");    
-    }
-    else {
-        for (i=0;i<BLogPaths.size();i++) {
-            if (BLogPaths[i]==FileName) {
-                this->PutMessage("Find log file: "+BLogPaths[i]);
-                return;
-            }
-        }
-        this->PutMessage("Can not find log file: "+FileName);
     }
     return;
 }
 
 void Cli::CliBase::ProAddMsg(vector<string> CMD)
 {
-    return; 
+    return;
 }
 
 void Cli::CliBase::ProDelMsg(vector<string> CMD)
@@ -318,29 +280,51 @@ void Cli::CliBase::ProShowMsg(vector<string> CMD)
 {
     int i;
 
-    if      (!InitFlag) {
-        this->PutMessage("Workfolder has not been initialized!");
+    if (!InitFlag) {
+        this->PutMessage("workfolder has not been initialized!");
+        return;
     }
     this->UpdateList();
-    this->PutMessage("All log files in workfolder:");
-    this->PutMessage("  BLog:");
+    this->PutMessage("all log files in workfolder:");
+    this->PutMessage(" BLog:");
     for (i=0;i<BLogPaths.size();i++) {
         if (BLogPaths[i].empty()) continue;
-        this->PutMessage("  |-"+BLogPaths[i]);
-    } this->PutMessage("  PLog:");
+        this->PutMessage("    |- "+BLogPaths[i]);
+    } 
+    this->PutMessage(" PLog:");
     for (i=0;i<PLogPaths.size();i++) {
         if (PLogPaths[i].empty()) continue;
-        this->PutMessage("  |-"+PLogPaths[i]);
-    } this->PutMessage("  FLog:");
+        this->PutMessage("    |- "+PLogPaths[i]);
+    } 
+    this->PutMessage(" FLog:");
     for (i=0;i<FLogPaths.size();i++) {
         if (FLogPaths[i].empty()) continue;
-        this->PutMessage("  |-"+FLogPaths[i]);
+        this->PutMessage("    |- "+FLogPaths[i]);
     }
     return;
 }
 
 void Cli::CliBase::ProFindMsg(vector<string> CMD)
 {
+    int i;
+    string TemPath;
+
+    if (!InitFlag) {
+        this->PutMessage("workfolder has not been initialized!");
+    }
+    else if (CMD.size()<=2) {
+        this->PutMessage("no '[-arg]' in command '-find'");
+    }
+    else if (CMD[2].empty()) {
+        this->PutMessage("no '[-arg]' in command '-find'");
+    }
+    else {
+        TemPath=WorkFolderPath+CMD[2];
+        for (i=0;i<BLogPaths.size();i++) if (BLogPaths[i]==TemPath) {this->PutMessage("file exist"); return;}
+        for (i=0;i<PLogPaths.size();i++) if (PLogPaths[i]==TemPath) {this->PutMessage("file exist"); return;}
+        for (i=0;i<FLogPaths.size();i++) if (FLogPaths[i]==TemPath) {this->PutMessage("file exist"); return;}
+        this->PutMessage("file is not exist");
+    }
     return;
 }
 
@@ -381,7 +365,7 @@ void Cli::CliBase::PutMessage(string Msg)
 {
     string LevelSign;
 
-    LevelSign="--";
+    LevelSign="  ";
 
     cout<<LevelSign+Msg<<endl;
 
@@ -392,7 +376,7 @@ void Cli::CliBase::DistributeCmd(string CMD)
 {
     switch (this->DecodeCmd(CMD)) {
         case CODE_NONE:
-             this->PutMessage("Need help ? input command 'fast -help'");
+             this->PutMessage("need help ? input command 'fast -help'");
              break;
         case CODE_HELP: this->ProHelpMsg();           break;
         case CODE_QUIT: exit(0);                      break;
@@ -414,28 +398,29 @@ int Cli::CliBase::DecodeCmd(string CMD)
 {
     int i;
     vector<string> CmdSplit;
-    vector<string> CmdList{"fast" ,"-help","-quit","-cls" ,
-                           "-ver" ,"-init","-new" ,"-rm"  ,"-add" ,
-                           "-del" ,"-show","-find"};
 
     if (CMD.empty()) return 0;
     sef_CmdSect.clear();
-
+    
+    // Split command by blank, so we can distinguish different command
+    // there we can know that:
+    // [0] should be "fast" [1] should be "-cmd" and the rest is
+    // [2]~[n] should be "-arg"
     CmdSplit=this->SplitStr(CMD,' ');
 
-    if (CmdSplit[0]!=CmdList[0]) {
-        this->PutMessage("Invaild command, no 'fast' ");
-        return 0;
-    }
-    if (CmdSplit.size()<2) {
-        this->PutMessage("Invaild command, no '[-cmd]' ");
+    if (CmdSplit[0]!=sef_CmdList[0]) {
+        this->PutMessage("invaild command, no 'fast' ");
         return CODE_NONE;
     }
-    for (i=1;i<CmdList.size();i++)
-        if (CmdSplit[1]==CmdList[i]) break;
-    if (i>=11) {
-        this->PutMessage("Unknow command, '"+CmdSplit[1]+"'");
-        return 0;
+    if (CmdSplit.size()<2) {
+        this->PutMessage("invaild command, no '[-cmd]' ");
+        return CODE_NONE;
+    }
+    for (i=1;i<sef_CmdList.size();i++)
+        if (CmdSplit[1]==sef_CmdList[i]) break;
+    if (i>11) {
+        this->PutMessage("unknow command, '"+CmdSplit[1]+"'");
+        return CODE_NONE;
     }
     sef_CmdSect=CmdSplit;
     

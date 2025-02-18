@@ -1,6 +1,6 @@
 # FLRecorder
 
-[中文](READMECN.md) | [English](README.md)
+[English](README.md) | [中文](READMECN.md)
 
 > [!NOTE]
 > 该项目还处于试验阶段.
@@ -9,7 +9,7 @@
 
 ![STARS](https://img.shields.io/github/stars/KenanZHu/FLRecorder.svg#pic_center) 
 ![ISSUES](https://img.shields.io/github/issues/KenanZHu/FLRecorder.svg#pic_center) 
-![LICENSE](https://img.shields.io/github/license/KenanZHu/FLRecorder.svg#pic_center)\
+![LICENSE](https://img.shields.io/github/license/KenanZHu/FLRecorder.svg#pic_center)
 
 一款快速构建日志，管理日志的命令行软件
 
@@ -80,9 +80,9 @@
 此命令将在工作文件夹中创建一个新的日志文件。与此同时，它接受两个参数。
 第一个参数是日志类型，这里是一些例子：
 
-``fast -new b example.log``
-``fast -new p example.plog``
-``fast -new f example.flog``
+``fast -new -b example.log``
+``fast -new -p example.plog``
+``fast -new -f example.flog``
 
 第二个参数是日志文件名。当存在第一个参数时，日志格式必须与扩展名匹配，
 否则程序将不做处理。省略第一个参数时，日志格式将默认为BLog。
@@ -126,7 +126,19 @@ NOT COMPLETE
 
 ### Linux
 
+我们使用CMake来构建Linux版本的FLRecorder。准确来说\
+是Ubuntu 24.10。通过{src}文件夹下的文件{CMakeLists.txt}\
+使用以下命令来构建：
+
+``mkdir build``
+``cd build``
+``cmake ..``
+``cmake --build .``
+
 ### MacOS
+
+通常来说，MacOS的构建和Linux的构建是一样的。不过我们还\
+未进行测试。如果您在MacOS上遇到问题，请提交issue告知我们。
 
 ## 联系
 

@@ -22,7 +22,8 @@
 /// ----------------------------------------------------///
 /// \hsitory $-Date      $-Version  $-Update
 ///          2025-02-09  0.0.1      First Created.
-///          2025-02-12  0.0.3      Fix some io logic.
+///          2025-02-12  0.0.3      See Update Note.
+///          2025-02-18  0.0.5      See Update Note.
 /// 
 ///=====================================================///
 
@@ -31,21 +32,25 @@
 
 /// STDLIB_H ///
 
-#include <regex>
-
 #ifdef _WIN32
 #include <io.h>
 #include <direct.h>
+
+#define  SLA '\\'
 #elif __APPLE__||__linux__
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/io.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#define  SLA '/'
 #endif
 
+#include <math.h>
+#include <regex>
 #include <cstdio>
-#include <string>
+#include <cstring>
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -56,7 +61,7 @@ using namespace std;
 /// CONSTANT ///
 
 /// -PROGRAM INFO
-#define PROG_VER "0.0.3"  // Program Version
+#define PROG_VER "0.0.5"  // Program Version
 
 #define LEVEL_0    0      // Message Level: No Debug Message
 #define LEVEL_1    1      // Message Level: Debug Message

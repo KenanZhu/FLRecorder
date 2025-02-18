@@ -1,5 +1,7 @@
 #include "LogTypes.h"
 
+/// Log Basic Class
+///
 ///////////////////////////     PRIVATE
 void Log::BLog::Init(int MaxLogs)
 {
@@ -83,9 +85,9 @@ int Log::BLog::DetectTimeStamp(string PreLine,string CurLine,double *Dt)
 
 bool Log::BLog::DetectLog(string PreLine,string CurLine,double *Dt,int *p)
 {
-    // Check Log Record Length
-
-    // WARN: Lower
+    // Check log record length
+    //
+    // WARN: Lower Maxline
     if (PreLine.size()<=MIN_LINE||CurLine.size()<=MIN_LINE) {
         this->PutMessage("(Lower_Min_Line): "+CurLine);
         return false;
@@ -97,8 +99,8 @@ bool Log::BLog::DetectLog(string PreLine,string CurLine,double *Dt,int *p)
         return false;
     }
 
-    // Check Date/Time Stamp
-
+    // Check date/time stamp
+    //
     // WARN: No Log Sign
     if (!this->DetectLogSign(CurLine)) {
         this->PutMessage("(No_Log_Sign): "+CurLine);
@@ -107,10 +109,10 @@ bool Log::BLog::DetectLog(string PreLine,string CurLine,double *Dt,int *p)
     
     switch (this->DetectTimeStamp(PreLine,CurLine,Dt))
     {
-    // WARN: No Time Stamp
+    // WARN: No time stamp
     case-1: this->PutMessage("(No_Time_Stamp): "+PreLine); return false;
     case-2: this->PutMessage("(No_Time_Stamp): "+CurLine); return false;
-    // WARN: Time Stamp Jump
+    // WARN: Time stamp jump
     case-3: this->PutMessage("(Time_Jump): "+PreLine); *p=-1; return false;
     case-4: this->PutMessage("(Time_Jump): "+CurLine); *p= 0; return false;
     }
@@ -158,9 +160,11 @@ bool Log::BLog::DelLog(string LogMsg)
 
 bool Log::BLog::CheckLog(void)
 {
-    int p,Counter[2]={0}; // [0]: Amount Counter[1]: Bad Log Record Counter
-    double Dt[2]={0}; // Time Difference
-    string Line[2]; // [0]: Previous Line[1]: Current Line
+    int p,Counter[2]={0}; // [0]: log record amount counter
+                          // [1]: bad log record counter
+    double Dt[2]={0};     // Time difference between current and previous log record
+    string Line[2];       // [0]: previous line
+                          // [1]: current line
 
     if (!this->IsOpen()) return false;
 
@@ -169,22 +173,22 @@ bool Log::BLog::CheckLog(void)
 
         if (Counter[0]>=100&&(((double)Counter[1]/(double)Counter[0])>MAX_INV_LOGS_RATE)) {
             this->Close();
-            this->PutMessage("fail (Over_Max_Invaild_Log_Rate)");
+            this->PutMessage("fail ! (Over_Max_Invaild_Log_Rate)");
             return sef_LogState=false;
         }
         if (Counter[0]>=1+1&&!this->DetectLog(Line[0],Line[1],Dt,&p)) {
             if (!CorrectLog()) {
                 Counter[1]++;
-                this->PutMessage("invaild record, Line="+std::to_string(Counter[0]+p));
+                this->PutMessage("invaild record, line="+std::to_string(Counter[0]+p));
             }
         }
         Line[0]=Line[1];
     }
     if (((sef_LogAmount=Counter[0])-Counter[1])>MAX_LOGS) {
-        this->PutMessage("Fail (Over_Max_Logs)");
+        this->PutMessage("fail ! (Over_Max_Logs)");
         return false;
     }
-    this->PutMessage("Ok !");
+    this->PutMessage("ok !");
     return true;
 }
 

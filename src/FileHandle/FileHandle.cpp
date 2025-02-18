@@ -1,5 +1,7 @@
 #include "FileHandle.h"
 
+/// File Handle Basic Class
+///
 ///////////////////////////     PRIVATE
 void Fhd::FileHandle::Init()
 {
@@ -45,10 +47,10 @@ std::string Fhd::FileHandle::Name()
 
 int Fhd::FileHandle::Format(string ExpName)
 {
-    // File Format Already Be Confirmed
+    // File format already be confirmed
     if (sef_FileFormat>FFMT_NON) return sef_FileFormat;
 
-    // For File Format is Not Be Confirmed
+    // For file format is not be confirmed
     if      (ExpName==".txt")  return sef_FileFormat=FFMT_TXT;
     else if (ExpName==".log")  return sef_FileFormat=FFMT_LOG;
     else if (ExpName==".plog") return sef_FileFormat=FFMT_PLO;
@@ -59,24 +61,25 @@ int Fhd::FileHandle::Format(string ExpName)
 
 int Fhd::FileHandle::SetPath(string FilePath)
 {
-    int p[2];
+    int p[2]={0};
     string ExpName;
 
     if (FilePath.empty()||FilePath.size()>MAX_PATH) return 0;
     if (!sef_FilePath.empty()) this->Init();
     sef_FilePath=FilePath;
 
-    // Get File Name (exclude expansion name)
-    if      ((p[0]=sef_FilePath.rfind("\\"))!=string::npos)
-        sef_FileName=sef_FilePath.substr(p[0]+1);
-    else if ((p[0]=sef_FilePath.rfind("/" ))!=string::npos)
+    // Get file name (exclude expansion name)
+    if      ((p[0]=sef_FilePath.rfind(SLA))!=string::npos)
         sef_FileName=sef_FilePath.substr(p[0]+1);
 
-    p[1]=sef_FileName.rfind(".");
-    ExpName =sef_FileName.substr(p[1]);
+    // Reject misatake in file format
+    p[1]=sef_FileName.rfind(".")==string::npos?0:sef_FileName.rfind(".");
+    if (p[0]*p[1]==0) return 0;
+    
+    ExpName=sef_FileName.substr(p[1]);
     sef_FileName=sef_FileName.substr(0,p[1]);
 
-    // Get File Format by Expansion Name
+    // Get file format by rxpansion name
     this->Format(ExpName);
 
     return 1;

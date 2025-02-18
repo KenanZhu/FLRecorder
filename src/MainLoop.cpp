@@ -43,13 +43,14 @@
 /// \hsitory $-Date      $-Version  $-Update
 ///          2025-02-09  0.0.1      First Created.
 ///          2025-02-12  0.0.3      See Update Note.
+///          2025-02-18  0.0.5      See Update Note.
 /// 
 ///=====================================================///
 
 #include "FLRecorder.h"
-#include ".\CLI\CmdLI.h"
-#include ".\LogTypes\LogTypes.h"
-#include ".\FileHandle\FileHandle.h"
+#include "./CLI/CmdLI.h"
+#include "./LogTypes/LogTypes.h"
+#include "./FileHandle/FileHandle.h"
 
 using namespace std;
 
@@ -62,7 +63,7 @@ int main(int argc,char *argv[])
     int LnhMod;
     string CMD;
 
-    /// System Level Init:
+    /// System level init:
     ///   set system info level by command line argument.
     if      (argc==1) LnhMod=0;
     else if (argc==2) {
@@ -80,11 +81,11 @@ int main(int argc,char *argv[])
 
     while (true) {
         
-        /// Get User Input
-        cout<<"FLRecorder\\main> ";
+        /// Get user input
+        cout<<"[FLRecorder ~ v0.0.5-alpha] >> : ";
         getline(cin,CMD,'\n');
         
-        /// Distribute Command
+        /// Distribute command
         CLI->DistributeCmd(CMD);
     }
     return 0;

@@ -1,7 +1,7 @@
 #ifndef _FILEHANDLE_H_
 #define _FILEHANDLE_H_
 
-#include "..\FLRecorder.h"
+#include "../FLRecorder.h"
 
 /// 
 /// File/Folder Handle Classes
@@ -20,46 +20,44 @@ protected:
     fstream sef_FileHand;
 private:
 
-    // Init All Members
+    // Init all members
     void Init(void);
-
     
-
 public:
     FileHandle(void);
     ~FileHandle(void);
 
-    // ReWrite Base Class
+    // Put message on the console
     void PutMessage(string Msg);
 
-    // Get File Path
+    // Get file path
     string Path(void);
 
-    // Get File Name
+    // Get file name
     string Name(void);
 
-    // Set/Get File Format
+    // Set/Get file format when argument is empty
     int Format(string ExpName=" ");
 
-    // Set File Path
+    // Set file path
     int SetPath(string FilePath);
 
-    // Create File
+    // Create file
     bool Create(void);
 
-    // Remove File
+    // Remove file
     bool Remove(void);
 
-    // Get File State: Exist
+    // Get file state: exist
     bool IsExist(void);
 
-    // Get File State: Open State
+    // Get file state: open state
     bool IsOpen(void);
 
-    // Get File State: Eof State
+    // Get file state: eof state
     bool IsEof(void);
 
-    // Close File
+    // Close file
     void Close(void);
 };
 

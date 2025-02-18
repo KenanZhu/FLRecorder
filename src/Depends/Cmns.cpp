@@ -1,6 +1,6 @@
 #include "Cmns.h"
 
-/// Convert Time Format From (Sec) to (Cal) /////
+/// Convert time format from (sec) to (cal) /////
 CalTime Sec2CalTime(SecTime Time)
 {
     CalTime Time_c={0};
@@ -43,7 +43,7 @@ CalTime Sec2CalTime(SecTime Time)
 
     return Time_c;
 }
-/// Convert Time Format From (Cal) to (Sec) /////
+/// Convert time format from (cal) to (sec) /////
 SecTime Cal2SecTime(CalTime Time)
 {
     SecTime Time_c={0};
@@ -70,6 +70,8 @@ SecTime Cal2SecTime(CalTime Time)
     return Time_c;
 }
 
+/// Common Depends Class
+///
 ///////////////////////////     PRIVATE
 bool Cmn::Time::IsSecEmpty(void)
 {
@@ -91,16 +93,16 @@ bool Cmn::Time::IsCalEmpty(void)
 
 void Cmn::Time::TimeConvert(int *Sign)
 {
-    // Not Empty or Empty All
+    // Not empty or empty all
     if      (Sign[0]==Sign[1]) {
         return;
     }
-    // SecTime is Empty
+    // SecTime type is empty
     else if (Sign[0]==0&&Sign[1]==1) {
         sef_SecTime=Cal2SecTime(sef_CalTime);
         return;
     }
-    // CalTime is Empty
+    // CalTime type is empty
     else if (Sign[0]==1&&Sign[1]==0) {
         sef_CalTime=Sec2CalTime(sef_SecTime);
         return;

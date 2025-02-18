@@ -1,6 +1,6 @@
 # FLRecorder
 
-[中文](READMECN.md) | [English](README.md)
+[English](README.md) | [中文](READMECN.md)
 
 > [!NOTE]
 > This project is still in experimental phase.
@@ -9,7 +9,7 @@
 
 ![STARS](https://img.shields.io/github/stars/KenanZHu/FLRecorder.svg#pic_center) 
 ![ISSUES](https://img.shields.io/github/issues/KenanZHu/FLRecorder.svg#pic_center) 
-![LICENSE](https://img.shields.io/github/license/KenanZHu/FLRecorder.svg#pic_center)\
+![LICENSE](https://img.shields.io/github/license/KenanZHu/FLRecorder.svg#pic_center)
 
 A CLI software which can fastly build log files and manage them.
 
@@ -86,9 +86,9 @@ workfolder. Meanwhile it accept two arguments.
 The first argument is the log type, here are
 the examples:
 
-``fast -new b example.log``
-``fast -new p example.plog``
-``fast -new f example.flog``
+``fast -new -b example.log``
+``fast -new -p example.plog``
+``fast -new -f example.flog``
 
 The second argument is the log file name. When
 exist the first argument, The log format must
@@ -140,7 +140,20 @@ preprocessor define in the solution configure.
 
 ### Linux
 
+We use CMake to build this program in Linux. Exactly,
+its on Ubuntu 24.10. So you can use the following command
+to build it by file {CMakeList.txt} in folder {src}.
+
+``mkdir build``
+``cd build``
+``cmake ..``
+``cmake --build .``
+
 ### MacOS
+
+In general, the build of MacOS is the same as Linux.
+We haven't test it. If you encounter any problem,
+please submit an issue to us.
 
 ## Contact
 

@@ -1,7 +1,7 @@
 #ifndef _CMNS_H_
 #define _CMNS_H_
 
-#include "..\FLRecorder.h"
+#include "../FLRecorder.h"
 
 /// -DATA TYPE ///
 typedef struct {    // Second with Fraction-Second Format
@@ -36,13 +36,13 @@ protected:
     SecTime sef_SecTime;
     CalTime sef_CalTime;
 private:
-    // Get Time State: SecTime State
+    // Get time state: SecTime state
     bool IsSecEmpty(void);
 
-    // Get Time State: CalTime State
+    // Get time state: CalTime state
     bool IsCalEmpty(void);
 
-    // Convert Time Format
+    // Convert time format
     void TimeConvert(int *Sign);
 public:
     Time(CalTime _CalTime);
@@ -54,14 +54,14 @@ public:
     // Get sef_CalTime
     CalTime GetCalTime(void);
 
-    // Get Time State
+    // Get time state
     bool IsEmpty(void);
 
-    // Compare Time With Target Time
+    // Compare time with target time
     double Comp(CalTime TargetCalTime);
     double Comp(SecTime TaretSecTime);
 
-    // Add Seconds/Fraction-Second
+    // Add seconds/fraction-second
     void Add(int Secs,double FSec=0.0);
 };
 

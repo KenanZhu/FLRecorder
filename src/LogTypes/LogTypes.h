@@ -1,9 +1,9 @@
 #ifndef _LOGTYPES_H_
 #define _LOGTYPES_H_
 
-#include "..\FLRecorder.h"
-#include "..\Depends\Cmns.h"
-#include "..\FileHandle\FileHandle.h"
+#include "../FLRecorder.h"
+#include "../Depends/Cmns.h"
+#include "../FileHandle/FileHandle.h"
 
 /// CONSTANT ///
 #define MAX_LOG_TIME_JUMP 2    // Max Jump of Log Time Stamp
@@ -23,36 +23,39 @@ protected:
     int sef_LogAmount;
     bool sef_LogState;
 private:
-    // Self-Methord
+    // Self-methord
     void Init(int MaxLogs);
 
-    // Convert String to Date
+    // Convert string to date
     CalTime String2Date(string StringDate);
 
-    // Detect Log Sign
+    // Detect log sign
     bool DetectLogSign(string DetectLine);
     
-    // Detect Time Stamp 
+    // Detect time stamp 
     int DetectTimeStamp(string PreLine,string CurLine,double *Dt);
     
-    // Detect Log Message
+    // Detect log message
     bool DetectLog(string PreLine,string CurLine,double *Dt,int *p);
 public:
     BLog(int MaxLogs=MAX_LOGS);
 
-    // ReWrite Base Class
+    // ReWrite base class form class Fhd::FileHandle
     void PutMessage(string Msg);
 
-    // Add Log Record
+    // Add log record, when argument is empty,
+    // add empty log record, but this will cause warning or reject
+    // on methord 'CheckLog()'
     bool AddLog(string LogMsg=" ");
 
-    // Delete Log Record
+    // Delete log record, when argument is empty,
+    // delete all log records
     bool DelLog(string LogMsg=" ");
 
-    // Check Log Vaild
+    // Check log vaild, mainly for check log time stamp jump
     bool CheckLog(void);
 
-    // Correct Invaild Log
+    // Correct invaild log
     bool CorrectLog(void);
 };
 
