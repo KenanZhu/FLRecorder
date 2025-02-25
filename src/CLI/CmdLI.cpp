@@ -162,7 +162,7 @@ void Cli::CliBase::ProInitMsg()
     int Flag;
     char Path[MAX_PATH]={0};
 
-    if      (InitFlag) {
+    if (InitFlag) {
         this->PutMessage("workfolder alreay been initialized!");
         return;
     }
@@ -222,7 +222,7 @@ void Cli::CliBase::ProNewMsg(vector<string> CMD)
 {
     int Flag=0,Fmt=0;
 
-    if      (!InitFlag) {
+    if (!InitFlag) {
         this->PutMessage("workfolder has not been initialized!");
     }
     else if (CMD.size()< 3) {
@@ -252,7 +252,7 @@ void Cli::CliBase::ProRemMsg(vector<string> CMD)
 {
     Fhd::FileHandle RMLog;
 
-    if      (!InitFlag) {
+    if (!InitFlag) {
         this->PutMessage("workfolder has not been initialized!");
     }
     else if (CMD.size()<3) {
@@ -260,8 +260,11 @@ void Cli::CliBase::ProRemMsg(vector<string> CMD)
     }
     else {
         RMLog.SetPath(WorkFolderPath+CMD[2]);
-        if (!RMLog.Remove()) this->PutMessage("cant remove file"+CMD[2]);
-        this->PutMessage("Remove log file: "+CMD[2]);
+        if (!RMLog.Remove()) { 
+            this->PutMessage("file: "+CMD[2]+" maybe not exist!");
+            return; 
+        }
+        this->PutMessage("remove log file: "+CMD[2]);
     }
     return;
 }
@@ -286,17 +289,17 @@ void Cli::CliBase::ProShowMsg(vector<string> CMD)
     }
     this->UpdateList();
     this->PutMessage("all log files in workfolder:");
-    this->PutMessage(" BLog:");
+    this->PutMessage(" [BLog]");
     for (i=0;i<BLogPaths.size();i++) {
         if (BLogPaths[i].empty()) continue;
         this->PutMessage("    |- "+BLogPaths[i]);
     } 
-    this->PutMessage(" PLog:");
+    this->PutMessage(" [PLog]");
     for (i=0;i<PLogPaths.size();i++) {
         if (PLogPaths[i].empty()) continue;
         this->PutMessage("    |- "+PLogPaths[i]);
     } 
-    this->PutMessage(" FLog:");
+    this->PutMessage(" [FLog]");
     for (i=0;i<FLogPaths.size();i++) {
         if (FLogPaths[i].empty()) continue;
         this->PutMessage("    |- "+FLogPaths[i]);
