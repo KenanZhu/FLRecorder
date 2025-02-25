@@ -104,16 +104,16 @@ void Cli::CliBase::GetAllFiles(string Dir, vector<string> *Files)
     struct dirent *ptr;
 
     if ((dir=opendir(Dir.c_str()))!=NULL) {
-        do {
+        
+        while ((ptr=readdir(dir))!=NULL) {
             if (ptr->d_type==DT_DIR) {
                 if (strcmp(ptr->d_name,".")!=0&&strcmp(ptr->d_name,"..")!=0)
-                    this->GetAllFiles(Dir+ptr->d_name+"/",Files);
+                this->GetAllFiles(Dir+ptr->d_name+SLA,Files);
             }
             else {
                 Files->push_back(Dir+ptr->d_name);
             }
-
-        } while ((ptr=readdir(dir))==NULL);
+        }
         closedir(dir);
     }
 #endif

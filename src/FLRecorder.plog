@@ -15,6 +15,8 @@
 [2025-02-18]
 1. 修复了无法识别基本命令[fast -find]的错误。
 2. 支持了Linux平台。
+[2025-02-25]
+1. 修复了[CmdLI]类中[GetAllFIles()]方法导致的错误。
 
 [EN]
 
@@ -32,5 +34,8 @@
 2. FIx the mistake that new log file's name excluding '.' will lead program into crash when you call [fats -new].
 [2025-02-18]
 1. Fix the mistake that cant know basic command [fast -find].
+2. Support Linux platform.
+[2025-02-25]
+1. Fix bug on Linux which occur in method [GetAllFIles()] in [CmdLI] class.
 
 $- Created by FLRecorder ver0.0.4-dev in P-log format.
