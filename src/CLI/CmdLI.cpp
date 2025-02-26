@@ -125,10 +125,6 @@ void Cli::CliBase::UpdateList()
     int i,j=0;
     vector<string> LogList;
 
-    if (!InitFlag) {
-        this->PutMessage("workfolder has not been initialized!");
-    }
-
     this->PutMessage("update log list...");
 
     // Check work folder file State
