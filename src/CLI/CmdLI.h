@@ -1,5 +1,5 @@
-#ifndef _CMFLI_H_
-#define _CMFLI_H_
+#ifndef _CMDLI_H_
+#define _CMDLI_H_
 
 #include "../FLRecorder.h"
 #include "../LogTypes/LogTypes.h"
@@ -87,4 +87,4 @@ public:
 
 }
 
-#endif // !_CMFLI_H_
+#endif // !_CMDLI_H_
