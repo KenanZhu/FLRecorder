@@ -7,16 +7,6 @@
 ///-----------------------------------------------------///
 /// \note
 /// 
-/// This is an open source software. You are free to use,
-/// modify, and redistribute it. However, you must include
-/// the original author's information and the original
-/// source code.
-///
-/// This program is a fast log recording constructor.
-/// It can support record simple message by BLog.
-///        support record project message by PLog.
-///        support recorder fast construct by FLog.
-/// 
 /// Copyright (c) 2025 by KenanZhu. All rights reserved.
 ///
 /// ----------------------------------------------------///
@@ -24,6 +14,7 @@
 ///          2025-02-09  0.0.1      First Created.
 ///          2025-02-12  0.0.3      See Update Note.
 ///          2025-02-18  0.0.5      See Update Note.
+///          2025-03-11  0.0.7      See Update Note.
 /// 
 ///=====================================================///
 
@@ -97,5 +88,7 @@ using namespace std;
 #define MAX_LINE (int)1E3 // Max Length of File Line
 #define MIN_LINE 30       // Min Length of File Line
 #define MAX_PATH 260      // Max Length of File Path
+
+#define STDMSG(Msg)      cout<<string(Msg)<<endl
 
 #endif // !_FLRECORDER_H_

@@ -2,16 +2,14 @@
 
 [English](README.md) | [中文](READMECN.md)
 
-> [!NOTE]
-> This project is still in experimental phase.
-
 ![FLRecorder_Logo](./doc/FLRecorder_CODE.png#pic_center)
 
 ![STARS](https://img.shields.io/github/stars/KenanZHu/FLRecorder.svg#pic_center) 
 ![ISSUES](https://img.shields.io/github/issues/KenanZHu/FLRecorder.svg#pic_center) 
 ![LICENSE](https://img.shields.io/github/license/KenanZHu/FLRecorder.svg#pic_center)
 
-A CLI software which can fastly build log files and manage them.
+A CLI software which can fastly build log files and manage them.\
+(Powered by CmdForge)
 
 ## Brief
 
@@ -55,8 +53,8 @@ is reject. here are commands:
            |____[str]     deleted log record.
         [-show]           Show all logs list.
            |____[str]     <optional> log file name
-        [-find]           Find log file.
-           |____[str]     log file name.
+
+The CLI is construct by lib: CmdForge (ver1.0.1)
 
 ### Command Introduction
 
@@ -86,8 +84,8 @@ workfolder. Meanwhile it accept two arguments.
 The first argument is the log type, here are
 the examples:
 
-``fast -new -b example.log``
-``fast -new -p example.plog``
+``fast -new -b example.log``\
+``fast -new -p example.plog``\
 ``fast -new -f example.flog``
 
 The second argument is the log file name. When
@@ -119,12 +117,6 @@ you can add the log file name as the argument.
 If you want to show all logs list, you can
 leave the argument empty.
 
-#### fast -find [str]
-
-This command will find a log file in the
-workfolder. Meanwhile it accept one argument.
-This argument is the log file name.
-
 ## Build
 
 ### Windows
@@ -135,7 +127,7 @@ use Visual Studio 2022 to build it.
 if occur warning, you can try to add the following\
 preprocessor define in the solution configure.
 
-``_CRT_SECURE_NO_WARNINGS``
+``_CRT_SECURE_NO_WARNINGS``\
 ``_CRT_NONSTDC_NO_DEPRECATE``
 
 ### Linux
@@ -144,9 +136,9 @@ We use CMake to build this program in Linux. Exactly,
 its on Ubuntu 24.10. So you can use the following command
 to build it by file {CMakeList.txt} in folder {src}.
 
-``mkdir build``
-``cd build``
-``cmake ..``
+``mkdir build``\
+``cd build``\
+``cmake ..``\
 ``cmake --build .``
 
 ### MacOS

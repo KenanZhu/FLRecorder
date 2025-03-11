@@ -2,16 +2,14 @@
 
 [English](README.md) | [中文](READMECN.md)
 
-> [!NOTE]
-> 该项目还处于试验阶段.
-
 ![FLRecorder_Logo](./doc/FLRecorder_CODE.png#pic_center)
 
 ![STARS](https://img.shields.io/github/stars/KenanZHu/FLRecorder.svg#pic_center) 
 ![ISSUES](https://img.shields.io/github/issues/KenanZHu/FLRecorder.svg#pic_center) 
 ![LICENSE](https://img.shields.io/github/license/KenanZHu/FLRecorder.svg#pic_center)
 
-一款快速构建日志，管理日志的命令行软件
+一款快速构建日志，管理日志的命令行软件\
+(Powered by CmdForge)
 
 ## 简介
 
@@ -52,8 +50,8 @@
            |____[str]     删除的日志记录
         [-show]           显示所有日志列表。
            |____[str]     <可选> 日志文件名
-        [-find]           查找日志文件。
-           |____[str]     日志文件名
+
+借助CLI界面构建库：CmdForge (ver1.0.1)
 
 ### 命令介绍
 
@@ -80,8 +78,8 @@
 此命令将在工作文件夹中创建一个新的日志文件。与此同时，它接受两个参数。
 第一个参数是日志类型，这里是一些例子：
 
-``fast -new -b example.log``
-``fast -new -p example.plog``
+``fast -new -b example.log``\
+``fast -new -p example.plog``\
 ``fast -new -f example.flog``
 
 第二个参数是日志文件名。当存在第一个参数时，日志格式必须与扩展名匹配，
@@ -106,11 +104,6 @@ NOT COMPLETE
 如果您想显示特定的日志文件，您可以将日志文件名作为参数。
 如果您想显示所有日志列表，您可以留空参数。
 
-#### fast -find [str]
-
-此命令将在工作文件夹中查找日志文件。与此同时，它接受一个参数。
-这个参数是日志文件名。
-
 ## 构建
 
 ### Windows
@@ -121,7 +114,7 @@ NOT COMPLETE
 如果出现警告，您可以尝试在解决方案配置中添加以下\
 预处理器定义
 
-``_CRT_SECURE_NO_WARNINGS``
+``_CRT_SECURE_NO_WARNINGS``\
 ``_CRT_NONSTDC_NO_DEPRECATE``
 
 ### Linux
@@ -130,9 +123,9 @@ NOT COMPLETE
 是Ubuntu 24.10。通过{src}文件夹下的文件{CMakeLists.txt}\
 使用以下命令来构建：
 
-``mkdir build``
-``cd build``
-``cmake ..``
+``mkdir build``\
+``cd build``\
+``cmake ..``\
 ``cmake --build .``
 
 ### MacOS
