@@ -28,7 +28,7 @@ void Fhd::FileHandle::PutMessage(string Msg)
 {
     string LevelSign;
 
-    LevelSign="--";
+    LevelSign="  ";
 
     cout<<LevelSign+Msg<<endl;
 
@@ -87,18 +87,18 @@ int Fhd::FileHandle::SetPath(string FilePath)
 
 bool Fhd::FileHandle::Create(void)
 {
-    this->PutMessage("Try to create file at:"+sef_FilePath);
+    this->PutMessage("try to create file at:"+sef_FilePath);
 
     if (this->IsExist()) {
-        this->PutMessage("File already exist");
+        this->PutMessage("file already exist");
         return true;
     }
     sef_FileHand.open(sef_FilePath,ios::out);
     if (!sef_FileHand.is_open()) {
-       this->PutMessage("Fail to create, Check permissions and try again");
+       this->PutMessage("fail to create, check permissions and try again");
        return false;
     }
-    this->PutMessage("Ok !");
+    this->PutMessage("ok !");
     this->Close();
 
     return true;
@@ -122,7 +122,6 @@ inline bool Fhd::FileHandle::IsExist()
 
     sef_FileHand.open(sef_FilePath,ios::in);
     if (!sef_FileHand.is_open()) {
-        this->PutMessage("File is not exist");
         return false;
     }
     this->Close();

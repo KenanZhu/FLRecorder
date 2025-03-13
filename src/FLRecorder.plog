@@ -1,36 +1,29 @@
-[CN]
+[2025-03-11]
+    1. Refactoring by CmdForge.
+
+[2025-02-25]
+    1. Fix bug on Linux which occur in method [GetAllFIles()] in [CmdLI] class.
+
+[2025-02-18]
+    1. Fix the mistake that cant know basic command [fast -find].
+    2. Support Linux platform.
+
+[2025-02-14]
+    1. Fix the mistake that occuring system level ergodic when you call [fast -show] before [fast -init].
+    2. FIx the mistake that new log file's name excluding '.' will lead program into crash when you call [fats -new].
+
+[2025-02-12]
+    1. Add Chinese&English version README and GNU license.
+    2. Change the logic of interact logic, independ the CLI class.
+
+[2025-02-11]
+    1. First commit.
+
+[2025-02-10]
+    1. Pass the practicality trail, complished the original version.
 
 [2025-02-09]
-1. 新项目创建。
-[2025-02-10]
-1. 可行性测试通过，初版完成。
-[2025-02-11]
-1. 第一次提交。
-[2025-02-12]
-1. 添加README中英文版本并添加GNU许可。
-2. 更改命令行交互逻辑，将CLI类独立出来。
-[2025-02-14]
-1. 修复了[fast -init]之前调用[fast -show]会出现系统级遍历的错误。
-2. 修复了[fast -new]创建文件名不包含后缀'.'导致程序崩溃的错误。
-[2025-02-18]
-1. 修复了无法识别基本命令[fast -find]的错误。
-2. 支持了Linux平台。
+    1. New project created.
 
-[EN]
 
-[2025-02-09]
-1. New project created.
-[2025-02-10]
-1. Pass the practicality trail, complished the original version.
-[2025-02-11]
-1. First commit.
-[2025-02-12]
-1. Add Chinese&English version README and GNU license.
-2. Change the logic of interact logic, independ the CLI class.
-[2025-02-14]
-1. Fix the mistake that occuring system level ergodic when you call [fast -show] before [fast -init].
-2. FIx the mistake that new log file's name excluding '.' will lead program into crash when you call [fats -new].
-[2025-02-18]
-1. Fix the mistake that cant know basic command [fast -find].
-
-$- Created by FLRecorder ver0.0.4-dev in P-log format.
+$- Created by FLRecorder (powered by CmdForge) ver0.0.8-dev in P-log format.

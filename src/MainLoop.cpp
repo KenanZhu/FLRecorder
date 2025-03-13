@@ -6,36 +6,6 @@
 /// \date   2025-02-09
 ///-----------------------------------------------------///
 /// \note
-///
-/// Software usage:
-///     This is a Command Line Interface (CLI) program.
-///     the command are all be lowercase, any different
-///     is reject. here are commands:
-///     
-///     commands are like:
-///       FLRecord/base> fast [-cmd] [arg]
-/// 
-///       $[-cmd] $[arg]    $command
-/// 
-///        [-help]           Get help.
-///        [-quit]           Exit the program.
-///        [-ver]            Get program version.
-///        [-init]           Init the workfolder.
-///        [-new]            Add a new log file.
-///           |____[str]     log type.
-///           |____[str]     log file name.
-///        [-rm]             Remove a log file.
-///           |____[str]     log file name.
-///        [-add]            Add a log record.
-///           |____[str]     log file name.
-///           |____[str]     new log record.
-///        [-del]            Delete a log record.
-///           |____[str]     log file name.
-///           |____[str]     deleted log record.
-///        [-show]           Show all logs list.
-///           |____[str]     <optional> log file name
-///        [-find]           Find log file.
-///           |____[str]     log file name.
 /// 
 /// Copyright (c) 2025 by KenanZhu. All rights reserved.
 ///
@@ -44,49 +14,69 @@
 ///          2025-02-09  0.0.1      First Created.
 ///          2025-02-12  0.0.3      See Update Note.
 ///          2025-02-18  0.0.5      See Update Note.
+///          2025-03-11  0.0.7      See Update Note.
 /// 
 ///=====================================================///
 
+#include "PackAPI.h"
 #include "FLRecorder.h"
-#include "./CLI/CmdLI.h"
-#include "./LogTypes/LogTypes.h"
-#include "./FileHandle/FileHandle.h"
+#include "./CmdForge/CmdForge.h"
 
 using namespace std;
 
-/// COMMAND LINE INTERFACE
-static Cli::CliBase *CLI;
-/// Control Class
-
 int main(int argc,char *argv[])
 {
-    int LnhMod;
-    string CMD;
+    ForgeHwnd CLIF;
+    CLICfgData Cfg;
+    OptFmtData OptFmt;
+    ArgFmtData ArgFmt;
 
-    /// System level init:
-    ///   set system info level by command line argument.
-    if      (argc==1) LnhMod=0;
-    else if (argc==2) {
-        try { LnhMod=stoi(argv[1]);}
-        catch (invalid_argument) {
-            cout<<"exit (code=-1): Invalid argument '"+string(argv[1])+"' !"; 
-            return -1;
-        }
-    }
-    else    {
-        cout<<"exit (code=-1): Too many arguments !";
-        return -1;
-    }
-    CLI=new Cli::CliBase();
+    Cfg.InputSleTime=10;
+    Cfg.DetectSleTime=10;
+    Cfg.MaxStoredCmd=20;
+    Cfg.Version="0.0.7";
+    Cfg.VerMode=VER_M_ALPA;
 
-    while (true) {
-        
-        /// Get user input
-        cout<<"[FLRecorder ~ v0.0.5-alpha] >> : ";
-        getline(cin,CMD,'\n');
-        
-        /// Distribute command
-        CLI->DistributeCmd(CMD);
-    }
+    CLIF.SetCLICfg(Cfg);
+    CLIF.SetCLIMainCmd("fast");
+
+    CLIF.HookCmdApi("-init",PackCmdInit);
+    CLIF.SetCmdBrief("-init","init the workfolder of FLRecorder.");
+
+    CLIF.HookCmdApi("-show",PackCmdShow);
+    CLIF.SetCmdBrief("-show","display the workfolder list");
+
+    CLIF.HookCmdApi("-new",PackCmdNew);
+    CLIF.SetCmdBrief("-new","create new log file.");
+    OptFmt.Brief="create new log file in basic type.";
+    OptFmt.Optional=true;
+    OptFmt.LongFmt="-basic";
+    OptFmt.ShortFmt="-b";
+    OptFmt.Args.push_back(ArgFmt);
+    CLIF.SetCmdOpt("-new",OptFmt);
+
+    OptFmt.Brief="create new log file in project type";
+    OptFmt.Optional=true;
+    OptFmt.LongFmt="-project";
+    OptFmt.ShortFmt="-p";
+    CLIF.SetCmdOpt("-new",OptFmt);
+
+    OptFmt.Brief="Create new log file in fast type";
+    OptFmt.Optional=true;
+    OptFmt.LongFmt="-fast";
+    OptFmt.ShortFmt="-f";
+    CLIF.SetCmdOpt("-new",OptFmt);
+
+    CLIF.HookCmdApi("-remove",PackCmdRemove);
+    CLIF.SetCmdBrief("-remove","remove exist file");
+    CLIF.HookCmdApi("-rm",PackCmdRemove);
+    OptFmt.Brief="default";
+    OptFmt.Optional=true;
+    OptFmt.LongFmt="-default";
+    OptFmt.ShortFmt="-d";
+    CLIF.SetCmdOpt("-remove",OptFmt);
+
+    CLIF.MainLoop("> FLRecorder {ver0.0.7} :");
+
     return 0;
 }
